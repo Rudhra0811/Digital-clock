@@ -4,53 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Clock</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f0f0f0;
-        }
-
-        .clock-container {
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .clock {
-            font-size: 72px;
-            color: #ffffff;
-            text-align: center;
-        }
-
-        .date {
-            font-size: 24px;
-            color: #cccccc;
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        .day {
-            font-size: 18px;
-            color: #999999;
-            text-align: center;
-            margin-top: 5px;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="clock-container">
         <div class="clock" id="clock">00:00:00</div>
         <div class="date" id="date">January 1, 2024</div>
         <div class="day" id="day">Monday</div>
+        <div class="greeting" id="greeting"></div>
     </div>
-
+    <div class="background-credit" id="background-credit"></div>
     <script src="script.js"></script>
 </body>
 </html>

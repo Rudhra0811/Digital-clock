@@ -19,22 +19,12 @@ function updateClock() {
     dayElement.textContent = days[now.getDay()];
 }
 
-// Update clock immediately and then every second
-updateClock();
-setInterval(updateClock, 1000);
-
-// Additional functionality: Change clock color every minute
 function changeClockColor() {
     const clockElement = document.getElementById('clock');
     const randomColor = Math.floor(Math.random()*16777215).toString(16);
     clockElement.style.color = "#" + randomColor;
 }
 
-// Change clock color immediately and then every minute
-changeClockColor();
-setInterval(changeClockColor, 60000);
-
-// Additional functionality: Add greeting based on time of day
 function updateGreeting() {
     const now = new Date();
     const hours = now.getHours();
@@ -48,20 +38,41 @@ function updateGreeting() {
         greeting = "Good evening!";
     }
 
-    // Create or update greeting element
-    let greetingElement = document.getElementById('greeting');
-    if (!greetingElement) {
-        greetingElement = document.createElement('div');
-        greetingElement.id = 'greeting';
-        greetingElement.style.fontSize = '20px';
-        greetingElement.style.color = '#ffffff';
-        greetingElement.style.textAlign = 'center';
-        greetingElement.style.marginTop = '10px';
-        document.querySelector('.clock-container').appendChild(greetingElement);
-    }
-    greetingElement.textContent = greeting;
+    document.getElementById('greeting').textContent = greeting;
 }
 
-// Update greeting immediately and then every hour
+function changeBackground() {
+    const body = document.body;
+    const newImage = `https://source.unsplash.com/1600x900/?nature,water&timestamp=${new Date().getTime()}`;
+    
+    body.style.backgroundImage = `url('${newImage}')`;
+    
+    // Update background credit
+    fetch(`https://api.unsplash.com/photos/random?query=nature,water&client_id=YOUR_UNSPLASH_API_KEY`)
+        .then(response => response.json())
+        .then(data => {
+            const credit = `Photo by ${data.user.name} on Unsplash`;
+            document.getElementById('background-credit').textContent = credit;
+        })
+        .catch(error => console.error('Error fetching image data:', error));
+}
+
+function applyFadeInEffect() {
+    const elements = document.querySelectorAll('.clock, .date, .day, .greeting');
+    elements.forEach(element => {
+        element.classList.add('fade-in');
+    });
+}
+
+// Initial calls
+updateClock();
+changeClockColor();
 updateGreeting();
+changeBackground();
+applyFadeInEffect();
+
+// Set intervals for periodic updates
+setInterval(updateClock, 1000);
+setInterval(changeClockColor, 60000);
 setInterval(updateGreeting, 3600000);
+setInterval(changeBackground, 3600000);
