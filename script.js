@@ -1,3 +1,6 @@
+// Global variables
+let backgroundChangeTimeout;
+
 function updateClock() {
     const now = new Date();
     const clockElement = document.getElementById('clock');
@@ -17,11 +20,14 @@ function updateClock() {
     // Update day
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     dayElement.textContent = days[now.getDay()];
+
+    // Update greeting
+    updateGreeting();
 }
 
 function changeClockColor() {
     const clockElement = document.getElementById('clock');
-    const randomColor = Math.floor(Math.random()*16777215).toString(16);
+    const randomColor = Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
     clockElement.style.color = "#" + randomColor;
 }
 
@@ -43,18 +49,36 @@ function updateGreeting() {
 
 function changeBackground() {
     const body = document.body;
-    const newImage = `https://source.unsplash.com/1600x900/?nature,water&timestamp=${new Date().getTime()}`;
     
-    body.style.backgroundImage = `url('${newImage}')`;
-    
-    // Update background credit
-    fetch(`https://api.unsplash.com/photos/random?query=nature,water&client_id=YOUR_UNSPLASH_API_KEY`)
+    fetch('https://api.unsplash.com/photos/random?query=nature,water&client_id=pvYSp1U8cfLUE0jmKgUcrCiLk2vkrBm1D821Uc0nV_k')
         .then(response => response.json())
         .then(data => {
-            const credit = `Photo by ${data.user.name} on Unsplash`;
-            document.getElementById('background-credit').textContent = credit;
+            const imageUrl = data.urls.full;
+            const photographer = data.user.name;
+            const profileUrl = data.user.links.html;
+            
+            const img = new Image();
+            img.src = imageUrl;
+            img.onload = () => {
+                body.style.backgroundImage = `url('${imageUrl}')`;
+                updatePhotoCredit(photographer, profileUrl);
+            };
+            img.onerror = () => {
+                console.error('Error loading background image');
+                // Retry after 1 minute
+                backgroundChangeTimeout = setTimeout(changeBackground, 60000);
+            };
         })
-        .catch(error => console.error('Error fetching image data:', error));
+        .catch(error => {
+            console.error('Error fetching image data:', error);
+            // Retry after 1 minute
+            backgroundChangeTimeout = setTimeout(changeBackground, 60000);
+        });
+}
+
+function updatePhotoCredit(photographer, profileUrl) {
+    const creditElement = document.getElementById('photo-credit');
+    creditElement.innerHTML = `Photo by <a href="${profileUrl}" target="_blank">${photographer}</a> on Unsplash`;
 }
 
 function applyFadeInEffect() {
@@ -65,14 +89,20 @@ function applyFadeInEffect() {
 }
 
 // Initial calls
-updateClock();
-changeClockColor();
-updateGreeting();
-changeBackground();
-applyFadeInEffect();
+function init() {
+    updateClock();
+    changeClockColor();
+    changeBackground();
+    applyFadeInEffect();
 
-// Set intervals for periodic updates
-setInterval(updateClock, 1000);
-setInterval(changeClockColor, 60000);
-setInterval(updateGreeting, 3600000);
-setInterval(changeBackground, 3600000);
+    // Set intervals for periodic updates
+    setInterval(updateClock, 1000);
+    setInterval(changeClockColor, 60000);
+    setInterval(() => {
+        clearTimeout(backgroundChangeTimeout);
+        changeBackground();
+    }, 3600000); // Change background every hour
+}
+
+// Start the clock when the page loads
+window.addEventListener('load', init);
